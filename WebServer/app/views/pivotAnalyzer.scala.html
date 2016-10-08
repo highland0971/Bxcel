@@ -1,1 +1,188 @@
-@()
+@(magic:String)
+
+<div class="easyui-layout" style="height:100%">
+    <div data-options="region:'center'">
+        <table class="easyui-datagrid" data-options="url:'datagrid_data1.json',method:'get',border:false,singleSelect:true,fit:true,fitColumns:true,toolbar:pivotGridToolbar">
+            <thead>
+                <tr>
+                    <th data-options="field:'itemid'" >Item ID</th>
+                    <th data-options="field:'productid'" >Product ID</th>
+                    <th data-options="field:'listprice',align:'right'" >List Price</th>
+                    <th data-options="field:'unitcost',align:'right'">Unit Cost</th>
+                    <th data-options="field:'attr1'" >Attribute</th>
+                    <th data-options="field:'status',align:'center'">Status</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="pivotWindow@magic" class="easyui-window" data-options="title:'分析策略',inline:true" minimizable=false closable=false style="width: 700px;height:350px;padding:2px">
+            <div class="easyui-panel" style="width:100%;height:100%;padding:2px;">
+                <div class="easyui-layout" data-options="fit:true">
+                    <div region="west" data-options="split:true,collapsible:false"  title="字段" style="width: 20%;padding:0px;position: relative">
+                        <ul id="candidateArea@magic" class="drop-target" style="margin:0;padding:2px;height: 98%">
+                            <li class="drag-item" value="Drag 1">Drag 1</li>
+                            <li class="drag-item" value="Drag 2">Drag 2</li>
+                            <li class="drag-item" value="Drag 3">Drag 3</li>
+                            <li class="drag-item" value="Drag 4">Drag 4</li>
+                            <li class="drag-item" value="Drag 5">Drag 5</li>
+                            <li class="drag-item" value="Drag 6">Drag 6</li>
+                        </ul>
+                    </div>
+                    <div data-options="region:'center',split:true,collapsible:false" style="width: 40%;padding:0px">
+                        <div class="easyui-layout" data-options="fit:true">
+                            <div data-options="region:'north',split:true,collapsible:false,title:'过滤项'" style="height: 50%;padding:0px;position: relative">
+                                <ul class="duplicate-target drop-target" style="margin:0;padding:2px;height: 98%">
+
+                                </ul>
+                            </div>
+                            <div data-options="region:'center',split:true,collapsible:false,title:'行项'" style="height: 50%;padding:0px;position: relative">
+                                <ul class="drop-target" style="margin:0;padding:2px;height: 98%"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'east',split:true,collapsible:false" style="width:40%;padding:0px;position: relative">
+                        <div class="easyui-layout" data-options="fit:true">
+                            <div data-options="region:'north',split:true,collapsible:false" title="列项" style="height: 50%;padding:0px;position: relative">
+                                <ul class="drop-target" style="margin:0;padding:2px;height: 98%"></ul>
+                            </div>
+                            <div data-options="region:'center',split:true,collapsible:false" title="计算项" style="height: 50%;padding:0px;position: relative">
+                                <ul class="drop-target" style="margin:0;padding:2px;height: 98%"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)" onclick="javascript:alert('ok')" style="width:80px">加载</a>
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="javascript:alert('cancel')" style="width:80px">终止</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="filterMenu@magic" class="easyui-menu" style="width:120px;">
+            <div onclick="javascript:$('#filterWindow@magic').window('open');">设置</div>
+        </div>
+        <div id="filterWindow@magic" minimizable=false collapsible=false class="easyui-window" title="过滤器设置" closed=true data-options="iconCls:'icon-search',inline:true" style="width:500px;height:auto;padding:10px;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+        var pivotGridToolbar = [
+            {
+                text:'导出',
+                iconCls:'icon-save',
+                handler:function(){alert('Save Succes')}
+            },{
+                text:'绘图',
+                iconCls:'icon-edit',
+                handler:function(){alert('Save As Success')}
+            }
+        ];
+
+        $(function(){
+            var indicator = $('<div class="indicator">>></div>').appendTo('body');
+            $('.drag-item').draggable({
+                revert:true,
+                proxy:function(){
+                    var a = $(this).clone().appendTo('body');
+                    a.css('zIndex','999999');
+                    return a;
+                }
+            });
+
+            $('.drop-target').droppable({
+                accept:'.drag-item',
+                onDragEnter:function(e,source){
+                    $(source).draggable('options').cursor='auto';
+                    $(source).draggable('proxy').css('border','1px solid red');
+                    $(this).addClass('over');
+                },
+                onDragLeave:function(e,source){
+                    $(source).draggable('options').cursor='not-allowed';
+                    $(source).draggable('proxy').css('border','1px solid #ccc');
+                    $(this).removeClass('over');
+                },
+                onDrop:function(e,source){
+                    $(this).find("[value='"+$(source).attr("value")+"']").remove();
+                    $(this).append(source);
+                    $(this).removeClass('over');
+                    $('.drag-item').draggable({
+                        revert:true,
+                        proxy:function(){
+                            var a = $(this).clone().appendTo('body');
+                            a.css('zIndex','999999');
+                            return a;
+                        }
+                    });
+                }
+            });
+
+            $('.duplicate-target').droppable({
+                accept:'.drag-item',
+                onDrop:function(e,source){
+                    if($(this).find("[value='"+$(source).attr("value")+"']").length > 0)
+                        $(this).find("[value='"+$(source).attr("value")+"']").remove();
+                    else
+                    {
+                        $("#candidateArea@magic").append($(source).clone());
+
+                        var filter = document.createElement("input");
+                        filter.setAttribute("id",$(source).attr("value"));
+                        filter.setAttribute("style","width:100%;margin: 5px");
+                        filter.setAttribute("label",$(source).attr("value"));
+                        $("#filterWindow@magic").append($(filter));
+
+                        $(filter).combobox({
+                            valueField:'value',
+                            textField:'text',
+                            data:[{"value":1,"text":"sdsds"},{"value":31,"text":"ccdss"}]
+                        });
+                    }
+                    $(this).append(source);
+                    $(this).removeClass('over');
+
+                    $('.duplicate-target .drag-item').bind('contextmenu',function(e){
+                        e.preventDefault();
+                        $('#filterMenu@magic').menu('show', {
+                            left: e.pageX,
+                            top: e.pageY
+                        });
+                    });
+
+                    $('.drag-item').draggable({
+                        revert:true,
+                        proxy:function(){
+                            var a = $(this).clone().appendTo('body');
+                            a.css('zIndex','999999');
+                            return a;
+                        }
+                    });
+                }
+            });
+        });
+</script>
+
+<style type="text/css">
+
+body{
+    padding: 0px;
+    margin: 0px;
+}
+
+.drag-item{
+    list-style-type:none;
+    display:block;
+    padding:5px;
+    border:1px solid #499B33;
+    margin:2px;
+    background:#fafafa;
+    color:#444;
+    text-align:center;
+}
+.indicator{
+    position:absolute;
+    font-size:9px;
+    width:10px;
+    height:10px;
+    display:none;
+    color:red;
+}
+</style>

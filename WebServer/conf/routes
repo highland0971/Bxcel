@@ -4,6 +4,13 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.DefaultController.index
+GET     /subscriptionMgmt               controllers.DefaultController.subscriptionMgmt
+GET     /dataSourceMgmt                 controllers.DefaultController.dataSourceMgmt
+GET     /getSubscriptionList            controllers.DefaultController.getSubscriptionList
+GET     /getDataSourceList            controllers.DefaultController.getDataSourceList
+GET     /getDataBrowser/:sourceName     controllers.DefaultController.getDataBrowser(sourceName:String)
+GET     /getPivotAnalyzer/:targetQuery               controllers.DefaultController.getPivotAnalyzer(targetQuery:String)
+POST    /submitNewDataSourceConfig         controllers.DefaultController.verifyDataSourceConfig
 
 
 # Map static resources from the /public folder to the /assets URL path

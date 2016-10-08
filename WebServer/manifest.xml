@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+    <SourceName>S1-MME XDR</SourceName>
+    <Version>2.1.1</Version>
+    <Description>
+        <Column>
+            <Name>IMSI</Name>
+            <Type length="20">String</Type>
+            <Alias>IMSI</Alias>
+            <Desensibilization>None</Desensibilization>
+        </Column>
+        <Column>
+            <Name>MSISDN</Name>
+            <Type>Long</Type>
+            <Alias>PhoneNumber</Alias>
+            <Desensibilization>XOR</Desensibilization>
+        </Column>
+        <Column>
+            <Name>Message</Name>
+            <Type length="128">String</Type>
+            <Alias>SignallingMessage</Alias>
+            <Desensibilization>None</Desensibilization>
+        </Column>
+        <Column>
+            <Name>TAC</Name>
+            <Type>Int</Type>
+            <Alias>TAC</Alias>
+            <Desensibilization>None</Desensibilization>
+        </Column>
+        <Column>
+            <Name>CI</Name>
+            <Type>Int</Type>
+            <Alias>Cell ID</Alias>
+            <Desensibilization>None</Desensibilization>
+        </Column>
+    </Description>
+
+</manifest>
